@@ -50,15 +50,24 @@
   </div>
 
   <script>
-    /* ===== ROTACJA WIDOKÓW ===== */
-    const views = document.querySelectorAll(".view");
-    let currentView = 0;
+  const views = document.querySelectorAll(".view");
+  let currentView = 0;
 
-    setInterval(() => {
-      views[currentView].classList.remove("active");
-      currentView = (currentView + 1) % views.length;
-      views[currentView].classList.add("active");
-    }, 60000); // 1 minuta
+  setInterval(() => {
+    views[currentView].classList.remove("active");
+    currentView = (currentView + 1) % views.length;
+    views[currentView].classList.add("active");
+
+    // 🔥 JEŚLI AKTYWNY JEST WIDOK Z MAPĄ → ODŚWIEŻ MAPĘ
+    if (views[currentView].querySelector("#map") && map) {
+      setTimeout(() => {
+        google.maps.event.trigger(map, "resize");
+        map.setCenter({ lat: 52.2297, lng: 21.0122 });
+      }, 200);
+    }
+
+  }, 60000);
+</script>
 
     /* ===== GOOGLE MAPS ===== */
     let map;
@@ -90,4 +99,5 @@
 
 </body>
 </html>
+
 
