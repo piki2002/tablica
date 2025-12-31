@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pogoda i Ruch</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .view {
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== WIDOK 1: POGODA ===== -->
+  <div class="view active">
+    <iframe
+      src="https://pogoda.onet.pl/prognoza-pogody/warszawa-357732">
+    </iframe>
+  </div>
+
+  <!-- ===== WIDOK 2: GOOGLE MAPS + TRAFFIC ===== -->
+  <div class="view">
+    <div id="map"></div>
+  </div>
+
+  <script>
+    /* ===== ROTACJA WIDOKÓW ===== */
+    const views = document.querySelectorAll(".view");
+    let currentView = 0;
+
+    setInterval(() => {
+      views[currentView].classList.remove("active");
+      currentView = (currentView + 1) % views.length;
+      views[currentView].classList.add("active");
+    }, 60000); // 1 minuta
+
+    /* ===== GOOGLE MAPS ===== */
+    let map;
+    let trafficLayer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 52.2297, lng: 21.0122 }, // Warszawa
+        zoom: 13,
+        mapTypeId: "roadmap"
+      });
+
+      trafficLayer = new google.maps.TrafficLayer();
+      trafficLayer.setMap(map);
+
+      // Odświeżanie ruchu co 3 minuty
+      setInterval(() => {
+        trafficLayer.setMap(null);
+        trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+      }, 180000);
+    }
+  </script>
+
+  <!-- ===== TU WSTAWIASZ SWÓJ KLUCZ API ===== -->
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJuYyCaBjwz4Ag6OxgkpfGdsgM7bfpRK0">
+  </script>
+
+</body>
+</html>
